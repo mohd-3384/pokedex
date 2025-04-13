@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: script.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: script.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>let limit = 20
+
+/**
+ * Fetches the first 20 Pokémon from the API and displays them on the main page.
+ * @param {number} [offset=0] - The starting point for fetching Pokémon.
+ * @returns {Promise&lt;void>} 
+ */
+async function fetchFirst20Pokemon(offset = 0) {
+    showSpinner();
+    loadMoreButton.classList.add("d-none");
+    const pokedexApiUrl = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&amp;$offset=${offset}`;
+    try {
+        const data = await fetchApiData(pokedexApiUrl);
+        const pokemonList = data.results;
+        await fetchAndDisplayPokemon(offset, pokemonList);
+        loadMoreButton.classList.remove("d-none");
+        hideSpinner();
+        return pokemonList;
+    } catch (error) {
+        handleFetchError(error)
+    }
+}
+
+/**
+ * Fetches JSON data from the given API URL.
+ * @param {string} url - The API endpoint URL.
+ * @returns {Promise&lt;Object>} - The parsed JSON response.
+ */
+async function fetchApiData(url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Fehler: ${response.status} ${response.statusText}`);
+    return response.json();
+}
+
+/**
+ * Fetches and displays Pokémon data from a list.
+ * @param {number} offset - The starting index for Pokémon.
+ * @param {Array} pokemonList - List of Pokémon retrieved from the API.
+ * @returns {Promise&lt;void>}
+ */
+async function fetchAndDisplayPokemon(offset, pokemonList) {
+    for (let index = offset; index &lt; pokemonList.length; index++) {
+        const responsePokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${index + 1}`);
+        const dataPokemon = await responsePokemon.json();
+        document.querySelector(".pokemons").innerHTML += pokemonCard(
+            index, dataPokemon, dataPokemon.sprites.other.home.front_default, dataPokemon.types
+        );
+    }
+}
+
+/**
+ * Handles errors during API fetch operations.
+ * @param {Error} error - The error object.
+ */
+function handleFetchError(error) {
+    console.error('Fehler beim Abrufen der Pokémon-Daten:', error);
+    loadMoreButton.classList.remove("d-none");
+    hideSpinner();
+}
+
+/**
+ * Filters Pokémon cards based on search input.
+ */
+function filterPokemon() {
+    const searchText = searchInput.value.toLowerCase().trim();
+    toggleLoadMoreButton(searchText === "")
+    const pokemonCards = document.querySelectorAll('.pokemon');
+    pokemonCards.forEach(card => {
+        const pokemonName = card.querySelector('.pokemon-name').textContent.toLowerCase();
+        toggleCardVisibility(card, pokemonName.includes(searchText));
+        if (pokemonName.includes(searchText)) {
+            card.classList.add('d-block');
+            card.classList.remove('d-none');
+        } else {
+            card.classList.add('d-none');
+            card.classList.remove('d-block');
+        }
+    });
+}
+
+/**
+ * Toggles the visibility of the "Load More" button.
+ * @param {boolean} show - Determines whether to show or hide the button.
+ */
+function toggleLoadMoreButton(show) {
+    const loadMoreButton = document.getElementById('loadMoreButton');
+    loadMoreButton.classList.toggle('d-block', show);
+    loadMoreButton.classList.toggle('d-none', !show);
+}
+
+/**
+ * Toggles the visibility of a Pokémon card.
+ * @param {HTMLElement} card - The Pokémon card element to toggle.
+ * @param {boolean} isVisible - Determines whether the card should be visible.
+ */
+function toggleCardVisibility(card, isVisible) {
+    card.classList.toggle('d-block', isVisible);
+    card.classList.toggle('d-none', !isVisible);
+}
+
+/**
+ * Loads 20 more Pokémon and fetches their data from the API.
+ * @returns {Promise&lt;void>}
+ */
+async function loadMorePokemon() {
+    searchInput.value = '';
+    showSpinner();
+    const offset = limit;
+    limit += 20;
+    await fetchFirst20Pokemon(offset);
+    hideSpinner();
+}
+
+/**
+ * Opens the overlay for a specific Pokémon by index.
+ * @param {number} index - The index of the Pokémon to display.
+ * @returns {Promise&lt;void>}
+ */
+async function openOverlay(index) {
+    currentIndex = index;
+    document.body.classList.add("overflowY-hidden");
+    overlay.classList.add("overlay");
+    const dataPokemon = await fetchPokemonData(index);
+    setupOverlay(dataPokemon, index);
+    setupOverlayNavigation(index);
+}
+
+/**
+ * Fetches Pokémon data for a given index.
+ * @param {number} index - The index of the Pokémon to fetch.
+ * @returns {Promise&lt;Object>} - The Pokémon data.
+ */
+async function fetchPokemonData(index) {
+    const responsePokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${index + 1}`);
+    return responsePokemon.json();
+}
+
+/**
+ * Sets up the overlay content for the specified Pokémon.
+ * @param {Object} dataPokemon - The Pokémon data object.
+ * @param {number} index - The index of the Pokémon.
+ */
+function setupOverlay(dataPokemon, index) {
+    const pokemonImg = dataPokemon.sprites.other.home.front_default;
+    const pokemonTypes = dataPokemon.types;
+    overlay.innerHTML += overlayTemp(index, dataPokemon, pokemonImg, pokemonTypes);
+    fetchAndDisplayEvolutionChain(index + 1, pokemonTypes.map(type => type.type.name));
+}
+
+/**
+ * Sets up navigation for the overlay with "Previous" and "Next" buttons.
+ * @param {number} index - The current Pokémon index.
+ */
+function setupOverlayNavigation(index) {
+    document.getElementById('prev').addEventListener("click", event => navigateOverlay(event, index - 1));
+    document.getElementById('next').addEventListener("click", event => navigateOverlay(event, index + 1));
+    document.getElementById('dialog').addEventListener("click", event => event.stopPropagation());
+}
+
+/**
+ * Navigates to a new Pokémon in the overlay.
+ * @param {Event} event - The click event object.
+ * @param {number} newIndex - The index of the new Pokémon.
+ */
+function navigateOverlay(event, newIndex) {
+    event.stopPropagation();
+    closeOverlay();
+    newIndex &lt; 0 ? openOverlay(0) : openOverlay(newIndex);
+}
+
+/**
+ * Fetches and displays the evolution chain for a Pokémon.
+ * @param {number} index - The Pokémon index.
+ * @param {Array&lt;string>} pokemonTypes - The types of the Pokémon.
+ * @returns {Promise&lt;void>}
+ */
+async function fetchAndDisplayEvolutionChain(index, pokemonTypes) {
+    try {
+        const chain = await getEvolutionChain(index, pokemonTypes);
+        renderEvolutionChain(chain, index);
+    } catch (error) {
+        console.error('Fehler beim Abrufen der Evolutionskette:', error);
+    }
+}
+
+/**
+ * Fetches the evolution chain for a Pokémon.
+ * @param {number} index - The Pokémon index.
+ * @param {Array&lt;string>} pokemonTypes - The Pokémon's types.
+ * @returns {Promise&lt;Array&lt;Object>>} - The evolution chain Pokémon data.
+ */
+async function getEvolutionChain(index, pokemonTypes) {
+    const chain = [];
+    const startIndex = Math.max(1, index - 2);
+    const endIndex = index + 3;
+    for (let i = startIndex; i &lt; endIndex; i++) {
+        const dataPokemon = await fetchPokemonData(i - 1);
+        if (dataPokemon.types.some(type => pokemonTypes.includes(type.type.name))) {
+            chain.push(dataPokemon);
+        }
+    }
+    return chain;
+}
+
+/**
+ * Renders the evolution chain in the overlay.
+ * @param {Array&lt;Object>} chain - The evolution chain data.
+ * @param {number} index - The current Pokémon index.
+ */
+function renderEvolutionChain(chain, index) {
+    const filteredChain = filterEvolutionChain(chain, index);
+    overlayChainContent.innerHTML = filteredChain.map(renderEvolutionCard).join('>>');
+}
+
+/**
+ * Filters the evolution chain to show only relevant Pokémon.
+ * @param {Array&lt;Object>} chain - The evolution chain data.
+ * @param {number} index - The current Pokémon index.
+ * @returns {Array&lt;Object>} - The filtered evolution chain.
+ */
+function filterEvolutionChain(chain, index) {
+    if (chain.length &lt;= 3) return chain;
+    const currentIndex = chain.findIndex(p => p.id === index + 1);
+    return [
+        chain[currentIndex - 1],
+        chain[currentIndex],
+        chain[currentIndex + 1]
+    ].filter(Boolean);
+}
+
+/**
+ * Displays the specified content in the overlay while hiding others.
+ * @param {HTMLElement} showElement - The element to show.
+ * @param {HTMLElement[]} hideElements - The elements to hide.
+ */
+function toggleOverlayContent(showElement, hideElements) {
+    showElement.classList.add("d-block");
+    showElement.classList.remove("d-none");
+
+    hideElements.forEach(element => {
+        element.classList.add("d-none");
+        element.classList.remove("d-block");
+    });
+}
+
+/**
+ * Displays the main content in the overlay.
+ */
+function getMainContent() {
+    toggleOverlayContent(overlayMainContent, [overlaystatsContent, overlayChainContent]);
+}
+
+/**
+ * Displays the stats content in the overlay.
+ */
+function getStatsContent() {
+    toggleOverlayContent(overlaystatsContent, [overlayMainContent, overlayChainContent]);
+}
+
+/**
+ * Displays the evolution chain content in the overlay.
+ */
+function getChainContent() {
+    toggleOverlayContent(overlayChainContent, [overlayMainContent, overlaystatsContent]);
+}
+
+/**
+ * Closes the dialog overlay.
+ */
+function closeDialog() {
+    closeOverlay();
+}
+
+/**
+ * Closes the overlay.
+ */
+function closeOverlay() {
+    document.body.classList.remove("overflowY-hidden");
+    overlay.classList.remove("overlay");
+    overlay.innerHTML = "";
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#closeDialog">closeDialog</a></li><li><a href="global.html#closeOverlay">closeOverlay</a></li><li><a href="global.html#fetchAndDisplayEvolutionChain">fetchAndDisplayEvolutionChain</a></li><li><a href="global.html#fetchAndDisplayPokemon">fetchAndDisplayPokemon</a></li><li><a href="global.html#fetchApiData">fetchApiData</a></li><li><a href="global.html#fetchFirst20Pokemon">fetchFirst20Pokemon</a></li><li><a href="global.html#fetchPokemonData">fetchPokemonData</a></li><li><a href="global.html#filterEvolutionChain">filterEvolutionChain</a></li><li><a href="global.html#filterPokemon">filterPokemon</a></li><li><a href="global.html#getChainContent">getChainContent</a></li><li><a href="global.html#getEvolutionChain">getEvolutionChain</a></li><li><a href="global.html#getMainContent">getMainContent</a></li><li><a href="global.html#getStatsContent">getStatsContent</a></li><li><a href="global.html#handleFetchError">handleFetchError</a></li><li><a href="global.html#loadMorePokemon">loadMorePokemon</a></li><li><a href="global.html#navigateOverlay">navigateOverlay</a></li><li><a href="global.html#openOverlay">openOverlay</a></li><li><a href="global.html#renderEvolutionChain">renderEvolutionChain</a></li><li><a href="global.html#setupOverlay">setupOverlay</a></li><li><a href="global.html#setupOverlayNavigation">setupOverlayNavigation</a></li><li><a href="global.html#toggleCardVisibility">toggleCardVisibility</a></li><li><a href="global.html#toggleLoadMoreButton">toggleLoadMoreButton</a></li><li><a href="global.html#toggleOverlayContent">toggleOverlayContent</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Jan 22 2025 19:49:15 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

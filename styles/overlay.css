@@ -1,0 +1,146 @@
+.overlay {
+    position: fixed;
+    width: 100%;
+    min-height: 100vh;
+    top: 0;
+    left: 0;
+    background-color: rgb(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#dialog {
+    width: 380px;
+    min-height: 500px;
+}
+
+.pokemon-info {
+    width: 80%;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.close-dialog {
+    font-size: 20px;
+    color: white;
+    background-color: red;
+    transition: 125ms;
+}
+
+.close-dialog:hover {
+    cursor: pointer;
+    background-color: rgba(255, 0, 0, 0.8);
+}
+
+.overlay-pokemon {
+    background-color: #031a1a;
+    box-shadow: 0 0 16px rgba(0, 128, 128, 0.9);
+}
+
+.overlay-pokemon-img {
+    width: 50%;
+}
+
+.pokemon-overlay-nav,
+.state,
+.state-content {
+    width: 100%;
+}
+
+.pokemon-overlay-nav li {
+    width: 120px;
+    cursor: pointer;
+    background-color: rgba(0, 128, 128, 0.3);
+    transition: 125ms;
+}
+
+.pokemon-overlay-nav li:hover {
+    scale: 1.02;
+    box-shadow: 0 0 6px rgb(1, 186, 186);
+}
+
+.dialogFoot {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.dialogFoot p {
+    font-size: 32px;
+}
+
+.dialogFoot p:not(:nth-last-of-type(2)):hover {
+    cursor: pointer;
+    text-shadow: 0 0 6px #fff;
+}
+
+.overlay-pokemon .main-content,
+.pokemon-overlay-nav,
+.evo-title {
+    font-weight: bold;
+}
+
+.main-content {
+    width: 100%;
+    padding-left: 24px;
+}
+
+.type-name {
+    width: fit-content;
+}
+
+.pokemon-overlay-name {
+    text-transform: capitalize;
+}
+
+.overlay-pokemon-img-container {
+    height: 220px;
+}
+
+.type img {
+    width: 20px;
+    height: 20px;
+}
+
+.state-title {
+    width: 40%;
+}
+
+.pokemon-overlay-info-content {
+    height: 180px;
+    width: 100%;
+}
+
+.progress {
+    width: 50%;
+}
+
+.chain-content .evo img {
+    width: 100px;
+    height: auto;
+}
+
+.chain-content .evo-title {
+    font-size: 16px;
+    text-align: center;
+}
+
+.prev-next {
+    width: 100%;
+}
+
+.prev,
+.next {
+    font-size: 32px;
+    cursor: pointer;
+    transition: 125ms;
+    user-select: none;
+}
+
+.prev:hover,
+.next:hover {
+    transform: scale(1.2);
+    text-shadow: 0 0 8px white;
+}

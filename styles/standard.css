@@ -1,0 +1,96 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Comic Neue";
+    scroll-behavior: smooth;
+}
+
+ul {
+    list-style: none;
+}
+
+body {
+    position: relative;
+    min-height: 100vh;
+    color: white;
+    background-color: #031a1a !important;
+}
+
+.overflowY-hidden {
+    overflow-y: hidden;
+}
+
+.btn-container {
+    width: 100%;
+}
+
+.btn button {
+    width: 25%;
+}
+
+.disabled {
+    pointer-events: none;
+}
+
+/* Loading Spinner */
+.loading-container {
+    background-color: transparent;
+}
+
+.spinner {
+    border: 8px solid #014D4D;
+    border-top: 8px solid rgba(90, 240, 240, 0.5);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+/* Animation for Spinner */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+/* scrollbar */
+/* Firefox */
+@-moz-document url-prefix() {
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(90, 240, 240, 0.5) !important;
+    }
+}
+
+/* Chrome */
+*::-webkit-scrollbar {
+    width: 12px !important;
+    height: 8px !important;
+}
+
+*::-webkit-scrollbar-track {
+    background-color: #031a1a !important;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #014D4D !important;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 128, 128, 0.5) !important;
+    cursor: n-resize;
+}
+
+*::-webkit-scrollbar-button {
+    display: none !important;
+}

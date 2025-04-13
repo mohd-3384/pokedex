@@ -1,0 +1,115 @@
+/* comic-neue-300 - latin */
+@font-face {
+    font-display: swap;
+    /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Comic Neue';
+    font-style: normal;
+    font-weight: 300;
+    src: url('./assets/fonts/comic-neue-v8-latin-300.woff2') format('woff2');
+    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* comic-neue-regular - latin */
+@font-face {
+    font-display: swap;
+    /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Comic Neue';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./assets/fonts/comic-neue-v8-latin-regular.woff2') format('woff2');
+    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* comic-neue-700 - latin */
+@font-face {
+    font-display: swap;
+    /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Comic Neue';
+    font-style: normal;
+    font-weight: 700;
+    src: url('./assets/fonts/comic-neue-v8-latin-700.woff2') format('woff2');
+    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* Header */
+header {
+    background-color: rgba(0, 128, 128, 0.5);
+    height: 130px;
+}
+
+header .search-container {
+    width: fit-content;
+}
+
+header img {
+    height: 60px;
+}
+
+header h1 {
+    font-size: 60px;
+}
+
+header #searchInput {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Pokemon Content */
+.poke-content {
+    min-height: calc(100vh - 230px);
+    background-color: #031a1a;
+}
+
+.pokemon-head {
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.poke-content .pokemon {
+    width: 200px;
+    background-color: rgba(0, 128, 128, 0.5);
+    cursor: pointer;
+    transition: 125ms;
+}
+
+.poke-content .pokemon:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 10px rgb(1, 212, 212);
+}
+
+.pokemon-name {
+    text-transform: capitalize;
+}
+
+.pokemon-img-container {
+    width: 100%;
+    height: 180px;
+}
+
+.pokemon-img {
+    width: 80%;
+}
+
+.poke-content .pokemon-types img {
+    width: 16px;
+    height: 16px;
+}
+
+.show-more {
+    font-size: 20px;
+    font-weight: bold;
+    width: 260px;
+    cursor: pointer;
+    background-color: rgba(0, 128, 128, 0.5);
+    transition: 125ms;
+}
+
+.show-more:hover {
+    scale: 1.03;
+    box-shadow: 0 0 6px rgb(1, 186, 186);
+}
+
+/* Footer */
+footer {
+    background-color: rgba(0, 128, 128, 0.5);
+    height: 100px;
+}
