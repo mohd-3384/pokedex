@@ -1,0 +1,1 @@
+Pokédex ist eine Web-App, die Pokémon-Daten aus der PokeAPI lädt. Du kannst Pokémon suchen und filtern; Karten zeigen Bild, Typen und ID. Ein Overlay mit Tabs (Main, Stats, Evo Chain) liefert Details wie Größe, Gewicht, Fähigkeiten und Werte. Das UI ist responsiv und mit Bootstrap umgesetzt; „Load more“ lädt weitere Einträge.
